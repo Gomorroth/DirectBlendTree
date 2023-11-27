@@ -29,7 +29,7 @@ using Object = UnityEngine.Object;
 
 namespace gomoru.su
 {
-    public sealed partial class DirectBlendTree : DirectBlendTree.IDirectBlendTreeItem
+    internal sealed partial class DirectBlendTree : DirectBlendTree.IDirectBlendTreeItem
     {
         public static AnimatorControllerParameter DefaultDirectBlendTreeParameter => new AnimatorControllerParameter() { name  = "1", type = AnimatorControllerParameterType.Float, defaultFloat = 1 };
 
