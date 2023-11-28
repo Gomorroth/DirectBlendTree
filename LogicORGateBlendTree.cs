@@ -11,23 +11,18 @@ namespace gomoru.su
 
         public string[] Parameters { get; set; }
 
-        public LogicORGateBlendTree(Object assetContainer) : base(assetContainer)
-        {
-        }
-
-
-        protected override void Apply(BlendTree destination)
+        protected override void Apply(BlendTree destination, Object assetContainer)
         {
             var blendTree = new BlendTree();
             blendTree.AddChild(OFF);
             blendTree.AddChild(ON);
             blendTree.blendParameter = Parameters[Parameters.Length - 1];
-            AssetDatabase.AddObjectToAsset(blendTree, AssetContainer);
+            AssetDatabase.AddObjectToAsset(blendTree, assetContainer);
 
             for (int i = Parameters.Length - 2; i >= 0; i--)
             {
                 var tree = new BlendTree();
-                AssetDatabase.AddObjectToAsset(tree, AssetContainer);
+                AssetDatabase.AddObjectToAsset(tree, assetContainer);
                 tree.AddChild(blendTree, 0);
                 tree.AddChild(ON, 1);
                 tree.blendParameter = Parameters[i];

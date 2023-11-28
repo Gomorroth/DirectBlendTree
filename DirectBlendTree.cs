@@ -9,33 +9,29 @@ namespace gomoru.su
     internal sealed partial class DirectBlendTree : IDirectBlendTreeItem
     {
         private List<IDirectBlendTreeItem> _items;
-        public Object AssetContainer { get; }
 
         public string Name { get; set; }
 
         public string ParameterName { get; }
 
-        public AnimatorControllerParameter DirectBlendParameter { get; }
-
-        public DirectBlendTree(Object assetContainer, string parameterName = "1")
+        public DirectBlendTree(string parameterName = "1")
         {
             _items = new List<IDirectBlendTreeItem>();
-            AssetContainer = assetContainer;
             ParameterName = parameterName;
         }
 
         public void Add(IDirectBlendTreeItem item) => _items.Add(item);
 
-        public BlendTree ToBlendTree()
+        public BlendTree ToBlendTree(Object assetContainer)
         {
             var blendTree = new BlendTree();
             blendTree.name = Name;
-            AssetDatabase.AddObjectToAsset(blendTree, AssetContainer);
+            AssetDatabase.AddObjectToAsset(blendTree, assetContainer);
             blendTree.blendType = BlendTreeType.Direct;
             SetNormalizedBlendValues(blendTree, false);
             foreach (var item in _items)
             {
-                item.Apply(blendTree);
+                item.Apply(blendTree, assetContainer);
             }
 
             var children = blendTree.children;
@@ -48,22 +44,22 @@ namespace gomoru.su
             return blendTree;
         }
 
-        public AnimatorControllerLayer ToAnimatorControllerLayer()
+        public AnimatorControllerLayer ToAnimatorControllerLayer(Object assetContainer)
         {
             var layer = new AnimatorControllerLayer();
             layer.name = Name;
             var stateMachine = layer.stateMachine = new AnimatorStateMachine();
-            AssetDatabase.AddObjectToAsset(stateMachine, AssetContainer);
+            AssetDatabase.AddObjectToAsset(stateMachine, assetContainer);
 
             var state = stateMachine.AddState(Name ?? "Direct Blend Tree");
-            state.motion = ToBlendTree();
+            state.motion = ToBlendTree(assetContainer);
 
             return layer;
         }
 
-        void IDirectBlendTreeItem.Apply(BlendTree destination)
+        void IDirectBlendTreeItem.Apply(BlendTree destination, Object assetContainer)
         {
-            var blendTree = ToBlendTree();
+            var blendTree = ToBlendTree(assetContainer);
             destination.AddChild(blendTree);
         }
 

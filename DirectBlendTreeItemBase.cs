@@ -1,4 +1,5 @@
-﻿using UnityEditor.Animations;
+﻿using UnityEditor;
+using UnityEditor.Animations;
 using Object = UnityEngine.Object;
 
 namespace gomoru.su
@@ -6,18 +7,19 @@ namespace gomoru.su
     internal abstract class DirectBlendTreeItemBase : IDirectBlendTreeItem
     {
         public string Name { get; set; }
-        protected Object AssetContainer { get; }
 
-        protected DirectBlendTreeItemBase(Object assetContainer)
+        void IDirectBlendTreeItem.Apply(BlendTree destination, Object assetContainer) => Apply(destination, assetContainer);
+
+        protected abstract void Apply(BlendTree destination, Object assetContainer);
+
+
+        protected static void SetNormalizedBlendValues(BlendTree blendTree, bool value)
         {
-            AssetContainer = assetContainer;
+            using (var so = new SerializedObject(blendTree))
+            {
+                so.FindProperty("m_NormalizedBlendValues").boolValue = value;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
         }
-
-        void IDirectBlendTreeItem.Apply(BlendTree destination)
-        {
-            Apply(destination);
-        }
-
-        protected abstract void Apply(BlendTree destination);
     }
 }

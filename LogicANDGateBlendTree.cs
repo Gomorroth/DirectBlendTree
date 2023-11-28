@@ -11,17 +11,13 @@ namespace gomoru.su
 
         public string[] Parameters { get; set; }
 
-        public LogicANDGateBlendTree(Object assetContainer) : base(assetContainer)
-        {
-        }
-
-        protected override void Apply(BlendTree destination)
+        protected override void Apply(BlendTree destination, Object assetContainer)
         {
             BlendTree root = new BlendTree();
             var blendTree = root;
             for(int i = 0; i < Parameters.Length; i++)
             {
-                AssetDatabase.AddObjectToAsset(blendTree, AssetContainer);
+                AssetDatabase.AddObjectToAsset(blendTree, assetContainer);
                 blendTree.name = Parameters[i];
                 blendTree.blendParameter = Parameters[i];
                 blendTree.AddChild(OFF);

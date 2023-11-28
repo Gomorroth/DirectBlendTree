@@ -11,14 +11,10 @@ namespace gomoru.su
         public Motion ON { get; set; }
         public Motion OFF { get; set; }
 
-        public ToggleBlendTree(Object assetContainer) : base(assetContainer)
-        {
-        }
-
-        protected override void Apply(BlendTree destination)
+        protected override void Apply(BlendTree destination, Object assetContainer)
         {
             var blendTree = new BlendTree();
-            AssetDatabase.AddObjectToAsset(blendTree, AssetContainer);
+            AssetDatabase.AddObjectToAsset(blendTree, assetContainer);
             blendTree.blendParameter = ParameterName;
             blendTree.name = Name;
             blendTree.AddChild(OFF, 0);

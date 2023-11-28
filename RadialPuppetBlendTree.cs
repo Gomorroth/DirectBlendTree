@@ -13,18 +13,14 @@ namespace gomoru.su
 
         public AnimationClip Animation { get; set; }
 
-        public RadialPuppetBlendTree(Object assetContainer) : base(assetContainer)
-        {
-        }
-
-        protected override void Apply(BlendTree destination)
+        protected override void Apply(BlendTree destination, Object assetContainer)
         {
             var blendTree = new BlendTree();
-            AssetDatabase.AddObjectToAsset(blendTree, AssetContainer);
+            AssetDatabase.AddObjectToAsset(blendTree, assetContainer);
             blendTree.blendParameter = ParameterName;
             blendTree.name = Name;
             var dict = _separatedClips;
-            SeparateAnimationClips(Animation, AssetContainer, dict);
+            SeparateAnimationClips(Animation, assetContainer, dict);
             var max = dict.Keys.Max();
             foreach(var item in dict.OrderBy(x => x.Key))
             {
