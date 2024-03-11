@@ -6,7 +6,7 @@ using Object = UnityEngine.Object;
 
 namespace gomoru.su
 {
-    internal sealed partial class DirectBlendTree : IDirectBlendTreeItem
+    internal sealed partial class DirectBlendTree : IDirectBlendTreeItem, IDirectBlendTreeContainer
     {
         private List<IDirectBlendTreeItem> _items;
 
@@ -72,5 +72,18 @@ namespace gomoru.su
                 so.ApplyModifiedPropertiesWithoutUndo();
             }
         }
+
+        public enum Target
+        {
+            OFF,
+            ON
+        }
+    }
+
+    static partial class DirectBlendTreeExtensions
+    {
+        public static DirectBlendTree AddDirectBlendTree<T>(this T directBlendTree, string name = null) where T : IDirectBlendTreeContainer => new DirectBlendTree(directBlendTree is DirectBlendTree tree ? tree.ParameterName : "1") { Name = name }.AddTo(directBlendTree);
+
+        public static DirectBlendTree AddDirectBlendTree<T>(this T directBlendTree, DirectBlendTree.Target target, string name = null) where T : IDirectBlendTreeONOFFContainer => new DirectBlendTree(directBlendTree is DirectBlendTree tree ? tree.ParameterName : "1") { Name = name }.AddTo(directBlendTree, target);
     }
 }

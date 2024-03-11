@@ -1,21 +1,18 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.Animations;
+using UnityEngine;
 
 namespace gomoru.su
 {
-    internal sealed class LogicORGateBlendTree : DirectBlendTreeItemBase
+    internal sealed class LogicORGateBlendTree : DirectBlendTreeONOFFItemBase
     {
-        public Motion ON { get; set; }
-        public Motion OFF { get; set; }
-
         public string[] Parameters { get; set; }
 
         protected override void Apply(BlendTree destination, Object assetContainer)
         {
             var blendTree = new BlendTree();
-            blendTree.AddChild(OFF);
-            blendTree.AddChild(ON);
+            OFF.Apply(blendTree, assetContainer);
+            ON.Apply(blendTree, assetContainer);
             blendTree.blendParameter = Parameters[Parameters.Length - 1];
             AssetDatabase.AddObjectToAsset(blendTree, assetContainer);
 
@@ -23,8 +20,8 @@ namespace gomoru.su
             {
                 var tree = new BlendTree();
                 AssetDatabase.AddObjectToAsset(tree, assetContainer);
-                tree.AddChild(blendTree, 0);
-                tree.AddChild(ON, 1);
+                tree.AddChild(blendTree);
+                ON.Apply(tree, assetContainer);
                 tree.blendParameter = Parameters[i];
 
                 blendTree = tree;
@@ -33,5 +30,12 @@ namespace gomoru.su
             blendTree.name = Name;
             destination.AddChild(blendTree);
         }
+    }
+
+    static partial class DirectBlendTreeExtensions
+    {
+        public static LogicORGateBlendTree AddOrGate<T>(this T directBlendTree, string name = null) where T : IDirectBlendTreeContainer => new LogicORGateBlendTree() { Name = name }.AddTo(directBlendTree);
+
+        public static LogicORGateBlendTree AddOrGate<T>(this T directBlendTree, DirectBlendTree.Target target, string name = null) where T : IDirectBlendTreeONOFFContainer => new LogicORGateBlendTree() { Name = name }.AddTo(directBlendTree, target);
     }
 }

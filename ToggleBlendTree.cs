@@ -4,12 +4,9 @@ using UnityEditor.Animations;
 
 namespace gomoru.su
 {
-    internal sealed class ToggleBlendTree : DirectBlendTreeItemBase
+    internal sealed class ToggleBlendTree : DirectBlendTreeONOFFItemBase
     {
         public string ParameterName { get; set; }
-
-        public Motion ON { get; set; }
-        public Motion OFF { get; set; }
 
         protected override void Apply(BlendTree destination, Object assetContainer)
         {
@@ -17,10 +14,17 @@ namespace gomoru.su
             AssetDatabase.AddObjectToAsset(blendTree, assetContainer);
             blendTree.blendParameter = ParameterName;
             blendTree.name = Name;
-            blendTree.AddChild(OFF, 0);
-            blendTree.AddChild(ON, 1);
+            OFF.Apply(destination, assetContainer);
+            ON.Apply(destination, assetContainer);
 
             destination.AddChild(blendTree);
         }
+    }
+
+    static partial class DirectBlendTreeExtensions
+    {
+        public static ToggleBlendTree AddToggle<T>(this T directBlendTree, string name = null) where T : IDirectBlendTreeContainer => new ToggleBlendTree() { Name = name }.AddTo(directBlendTree);
+
+        public static ToggleBlendTree AddToggle<T>(this T directBlendTree, DirectBlendTree.Target target, string name = null) where T : IDirectBlendTreeONOFFContainer => new ToggleBlendTree() { Name = name }.AddTo(directBlendTree, target);
     }
 }

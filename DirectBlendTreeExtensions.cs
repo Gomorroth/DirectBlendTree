@@ -1,23 +1,27 @@
 ﻿namespace gomoru.su
 {
-    internal static class DirectBlendTreeExtensions
+    internal static partial class DirectBlendTreeExtensions
     {
-        private static T AddTo<T>(this T tree, DirectBlendTree blendTree) where T : IDirectBlendTreeItem
+        private static T AddTo<T, TContainer>(this T tree, TContainer blendTree) where T : IDirectBlendTreeItem where TContainer : IDirectBlendTreeContainer
         {
             blendTree.Add(tree);
             return tree;
         }
 
+        private static T AddTo<T, TContainer>(this T tree, TContainer blendTree, DirectBlendTree.Target target) where T : IDirectBlendTreeItem where TContainer : IDirectBlendTreeONOFFContainer
+        {
+            blendTree.Add(tree, target);
+            return tree;
+        }
+    }
 
-        public static DirectBlendTree AddDirectBlendTree(this DirectBlendTree directBlendTree, string name = null) => new DirectBlendTree(directBlendTree.ParameterName) { Name = name }.AddTo(directBlendTree);
+    internal interface IDirectBlendTreeContainer
+    {
+        void Add(IDirectBlendTreeItem tree);
+    }
 
-        public static ToggleBlendTree AddToggle(this DirectBlendTree directBlendTree, string name = null) => new ToggleBlendTree() { Name = name }.AddTo(directBlendTree);
-
-        public static RadialPuppetBlendTree AddRadialPuppet(this DirectBlendTree directBlendTree, string name = null) => new RadialPuppetBlendTree() { Name = name }.AddTo(directBlendTree);
-
-        public static LogicORGateBlendTree AddOrGate(this DirectBlendTree directBlendTree, string name = null) => new LogicORGateBlendTree() { Name = name }.AddTo(directBlendTree);
-
-        public static LogicANDGateBlendTree AddAndGate(this DirectBlendTree directBlendTree, string name = null) => new LogicANDGateBlendTree() { Name = name }.AddTo(directBlendTree);
-
+    internal interface IDirectBlendTreeONOFFContainer
+    {
+        void Add(IDirectBlendTreeItem tree, DirectBlendTree.Target target);
     }
 }

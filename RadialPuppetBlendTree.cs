@@ -19,7 +19,7 @@ namespace gomoru.su
             AssetDatabase.AddObjectToAsset(blendTree, assetContainer);
             blendTree.blendParameter = ParameterName;
             blendTree.name = Name;
-            var dict = _separatedClips;
+            var dict = new Dictionary<float, AnimationClip>();
             SeparateAnimationClips(Animation, assetContainer, dict);
             var max = dict.Keys.Max();
             foreach(var item in dict.OrderBy(x => x.Key))
@@ -30,7 +30,6 @@ namespace gomoru.su
         }
 
         private static readonly ObjectReferenceKeyframe[] _singleKeyFrame = new ObjectReferenceKeyframe[1];
-        private static Dictionary<float, AnimationClip> _separatedClips = new Dictionary<float, AnimationClip>();
 
         private static void SeparateAnimationClips(AnimationClip clip, Object assetContainer, Dictionary<float, AnimationClip> destination)
         {
@@ -46,7 +45,6 @@ namespace gomoru.su
                     {
                         var time = key.time;
                         var motion = GetOrAddSeparetedClip(time);
-
                         var singleCurve = AnimationCurve.Constant(time, time, key.value);
                         AnimationUtility.SetEditorCurve(motion, binding, singleCurve);
                     }
@@ -80,5 +78,12 @@ namespace gomoru.su
                 return motion;
             }
         }
+    }
+
+    static partial class DirectBlendTreeExtensions
+    {
+        public static RadialPuppetBlendTree AddRadialPuppet<T>(this T directBlendTree, string name = null) where T : IDirectBlendTreeContainer => new RadialPuppetBlendTree() { Name = name }.AddTo(directBlendTree);
+
+        public static RadialPuppetBlendTree AddRadialPuppet<T>(this T directBlendTree, DirectBlendTree.Target target, string name = null) where T : IDirectBlendTreeONOFFContainer => new RadialPuppetBlendTree() { Name = name }.AddTo(directBlendTree, target);
     }
 }
