@@ -14,8 +14,8 @@ namespace gomoru.su
             AssetDatabase.AddObjectToAsset(blendTree, assetContainer);
             blendTree.blendParameter = ParameterName;
             blendTree.name = Name;
-            OFF.Apply(destination, assetContainer);
-            ON.Apply(destination, assetContainer);
+            OFF.Apply(blendTree, assetContainer);
+            ON.Apply(blendTree, assetContainer);
 
             destination.AddChild(blendTree);
         }
@@ -26,5 +26,15 @@ namespace gomoru.su
         public static ToggleBlendTree AddToggle<T>(this T directBlendTree, string name = null) where T : IDirectBlendTreeContainer => new ToggleBlendTree() { Name = name }.AddTo(directBlendTree);
 
         public static ToggleBlendTree AddToggle<T>(this T directBlendTree, DirectBlendTree.Target target, string name = null) where T : IDirectBlendTreeONOFFContainer => new ToggleBlendTree() { Name = name }.AddTo(directBlendTree, target);
+    }
+
+    internal sealed class MotionTree : IDirectBlendTreeItem
+    {
+        public Motion? Motion { get; set; }
+
+        void IDirectBlendTreeItem.Apply(BlendTree destination, Object assetContainer)
+        {
+            destination.AddChild(Motion);
+        }
     }
 }
