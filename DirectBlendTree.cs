@@ -51,7 +51,7 @@ namespace gomoru.su
             var stateMachine = layer.stateMachine = new AnimatorStateMachine();
             AssetDatabase.AddObjectToAsset(stateMachine, assetContainer);
 
-            var state = stateMachine.AddState($"{(Name ?? "Direct Blend Tree")} (WD ON)");
+            var state = stateMachine.AddState($"{(Name ?? "Direct Blend Tree")} (WD On)");
             state.writeDefaultValues = true;
             state.motion = ToBlendTree(assetContainer);
 

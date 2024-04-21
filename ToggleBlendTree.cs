@@ -30,7 +30,7 @@ namespace gomoru.su
 
     internal sealed class MotionTree : IDirectBlendTreeItem
     {
-        public Motion? Motion { get; set; }
+        public Motion Motion { get; set; }
 
         void IDirectBlendTreeItem.Apply(BlendTree destination, Object assetContainer)
         {
