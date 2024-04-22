@@ -27,14 +27,4 @@ namespace gomoru.su
 
         public static ToggleBlendTree AddToggle<T>(this T directBlendTree, DirectBlendTree.Target target, string name = null) where T : IDirectBlendTreeONOFFContainer => new ToggleBlendTree() { Name = name }.AddTo(directBlendTree, target);
     }
-
-    internal sealed class MotionTree : IDirectBlendTreeItem
-    {
-        public Motion Motion { get; set; }
-
-        void IDirectBlendTreeItem.Apply(BlendTree destination, Object assetContainer)
-        {
-            destination.AddChild(Motion);
-        }
-    }
 }

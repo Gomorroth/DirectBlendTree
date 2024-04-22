@@ -3,11 +3,10 @@ using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
-using Object = UnityEngine.Object;
 
 namespace gomoru.su
 {
-    internal sealed class RadialPuppetBlendTree : DirectBlendTreeItemBase
+    internal sealed class MotionTimeTree : DirectBlendTreeItemBase
     {
         public string ParameterName { get; set; }
 
@@ -15,12 +14,14 @@ namespace gomoru.su
 
         protected override void Apply(BlendTree destination, Object assetContainer)
         {
+            var dict = new Dictionary<float, AnimationClip>();
+            SeparateAnimationClips(Animation, assetContainer, dict);
+            if (dict.Count == 0)
+                return;
             var blendTree = new BlendTree();
             AssetDatabase.AddObjectToAsset(blendTree, assetContainer);
             blendTree.blendParameter = ParameterName;
             blendTree.name = Name;
-            var dict = new Dictionary<float, AnimationClip>();
-            SeparateAnimationClips(Animation, assetContainer, dict);
             var max = dict.Keys.Max();
             foreach(var item in dict.OrderBy(x => x.Key))
             {
@@ -82,8 +83,8 @@ namespace gomoru.su
 
     static partial class DirectBlendTreeExtensions
     {
-        public static RadialPuppetBlendTree AddRadialPuppet<T>(this T directBlendTree, string name = null) where T : IDirectBlendTreeContainer => new RadialPuppetBlendTree() { Name = name }.AddTo(directBlendTree);
+        public static MotionTimeTree AddMotionTime<T>(this T directBlendTree, string name = null) where T : IDirectBlendTreeContainer => new MotionTimeTree() { Name = name }.AddTo(directBlendTree);
 
-        public static RadialPuppetBlendTree AddRadialPuppet<T>(this T directBlendTree, DirectBlendTree.Target target, string name = null) where T : IDirectBlendTreeONOFFContainer => new RadialPuppetBlendTree() { Name = name }.AddTo(directBlendTree, target);
+        public static MotionTimeTree AddMotionTime<T>(this T directBlendTree, DirectBlendTree.Target target, string name = null) where T : IDirectBlendTreeONOFFContainer => new MotionTimeTree() { Name = name }.AddTo(directBlendTree, target);
     }
 }
